@@ -1,4 +1,4 @@
-// Tencent is pleased to support the open source community by making UnLua available.
+﻿// Tencent is pleased to support the open source community by making UnLua available.
 // 
 // Copyright (C) 2019 THL A29 Limited, a Tencent company. All rights reserved.
 //
@@ -28,6 +28,14 @@
 #include "ReflectionUtils/ReflectionRegistry.h"
 #include "Interfaces/IPluginManager.h"
 #include "DelegateHelper.h"
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+#include "bindinglua.h"
+#ifdef __cplusplus
+}
+#endif 
 
 #if WITH_EDITOR
 #include "Editor.h"
@@ -123,6 +131,7 @@ void FLuaContext::CreateState()
         L = lua_newstate(FLuaContext::LuaAllocator, nullptr);       // create main Lua thread
         check(L);
         luaL_openlibs(L);                                           // open all standard Lua libraries
+        luaL_openlibs_pbc(L);                                      // open mime lua libraries
 
         AddSearcher(LoadFromCustomLoader, 2);
         AddSearcher(LoadFromFileSystem, 3);
