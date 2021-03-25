@@ -1,4 +1,4 @@
-// Tencent is pleased to support the open source community by making UnLua available.
+﻿// Tencent is pleased to support the open source community by making UnLua available.
 // 
 // Copyright (C) 2019 THL A29 Limited, a Tencent company. All rights reserved.
 //
@@ -317,6 +317,31 @@ static int32 TArray_GetData(lua_State *L)
 
     void *Data = Array->GetData();
     lua_pushlightuserdata(L, Data);
+    return 1;
+}
+
+/**
+ * Inteface to set data for lua
+ */
+static int32 TArray_SetData(lua_State* L)
+{
+    int32 NumParams = lua_gettop(L);
+    if (NumParams != 3)
+    {
+        UNLUA_LOGERROR(L, LogUnLua, Log, TEXT("%s: Invalid parameters!"), ANSI_TO_TCHAR(__FUNCTION__));
+        return 0;
+    }
+
+    FLuaArray* Array = (FLuaArray*)(GetCppInstanceFast(L, 1));
+    if (!Array)
+    {
+        UNLUA_LOGERROR(L, LogUnLua, Log, TEXT("%s: Invalid TArray!"), ANSI_TO_TCHAR(__FUNCTION__));
+        return 0;
+    }
+    uint8* Data = (uint8*)lua_touserdata(L, 2);
+    int Len = lua_tointeger(L, 3);
+    Array->AddUninitialized(Len);
+    FMemory::Memcpy(Array->GetData(), Data, Len);
     return 1;
 }
 
@@ -643,6 +668,7 @@ static const luaL_Reg TArrayLib[] =
     { "Reserve", TArray_Reserve },
     { "Resize", TArray_Resize },
     { "GetData", TArray_GetData },
+    { "SetData", TArray_SetData },
     { "Get", TArray_Get },
     { "GetRef", TArray_GetRef },
     { "Set", TArray_Set },

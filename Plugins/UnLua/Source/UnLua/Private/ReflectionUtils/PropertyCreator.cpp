@@ -1,4 +1,4 @@
-// Tencent is pleased to support the open source community by making UnLua available.
+﻿// Tencent is pleased to support the open source community by making UnLua available.
 // 
 // Copyright (C) 2019 THL A29 Limited, a Tencent company. All rights reserved.
 //
@@ -39,6 +39,7 @@ public:
     virtual ~FPropertyCreator()
     {
         BoolPropertyDesc.Reset();
+        BytePropertyDesc.Reset();
         IntPropertyDesc.Reset();
         FloatPropertyDesc.Reset();
         StringPropertyDesc.Reset();
@@ -81,6 +82,22 @@ public:
             BoolPropertyDesc = OnPropertyCreated(Property);
         }
         return BoolPropertyDesc;
+    }
+
+    virtual TSharedPtr<UnLua::ITypeInterface> CreateByteProperty() override
+    {
+        if (!BytePropertyDesc)
+        {
+#if ENGINE_MINOR_VERSION < 25
+            // see overloaded operator new that defined in DECLARE_CLASS(...)
+            UByteProperty* Property = new (EC_InternalUseOnlyConstructor, ScriptStruct, NAME_None, RF_Transient) UByteProperty(FObjectInitializer(), EC_CppProperty, 0, CPF_HasGetValueTypeHash);
+#else
+
+            FByteProperty* Property = new FByteProperty(ScriptStruct, NAME_None, RF_Transient, 0, CPF_HasGetValueTypeHash);
+#endif
+            BytePropertyDesc = OnPropertyCreated(Property);
+        }
+        return BytePropertyDesc;
     }
 
     virtual TSharedPtr<UnLua::ITypeInterface> CreateIntProperty() override
@@ -476,6 +493,7 @@ private:
 
     UScriptStruct *ScriptStruct;
     TSharedPtr<UnLua::ITypeInterface> BoolPropertyDesc;
+    TSharedPtr<UnLua::ITypeInterface> BytePropertyDesc;
     TSharedPtr<UnLua::ITypeInterface> IntPropertyDesc;
     TSharedPtr<UnLua::ITypeInterface> FloatPropertyDesc;
     TSharedPtr<UnLua::ITypeInterface> StringPropertyDesc;

@@ -1,4 +1,4 @@
-// Tencent is pleased to support the open source community by making UnLua available.
+﻿// Tencent is pleased to support the open source community by making UnLua available.
 // 
 // Copyright (C) 2019 THL A29 Limited, a Tencent company. All rights reserved.
 //
@@ -30,6 +30,7 @@ public:
 
     virtual void Cleanup() = 0;
     virtual TSharedPtr<UnLua::ITypeInterface> CreateBoolProperty() = 0;
+    virtual TSharedPtr<UnLua::ITypeInterface> CreateByteProperty() = 0;
     virtual TSharedPtr<UnLua::ITypeInterface> CreateIntProperty() = 0;
     virtual TSharedPtr<UnLua::ITypeInterface> CreateFloatProperty() = 0;
     virtual TSharedPtr<UnLua::ITypeInterface> CreateStringProperty() = 0;
