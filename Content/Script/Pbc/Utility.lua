@@ -2,9 +2,9 @@
 local Utility  = {}
 local Protobuf = require "ThirdParty/protobuf"
 local PCDir = UBlueprintPathsLibrary.ProjectContentDir()
-print("Project content dir:" .. PCDir)
+local FullPath = UBlueprintPathsLibrary.ConvertRelativePathToFull(PCDir)
+Protobuf.register(LoadFile(FullPath.."Script/Pbc/test.pb"));
 
-Protobuf.register_file(PCDir.."/Script/Pbc/test.pb")
 -- Encode protobuf
 -- @param protoname example as 'Protos.HelloRequest'
 -- @param message in lua table

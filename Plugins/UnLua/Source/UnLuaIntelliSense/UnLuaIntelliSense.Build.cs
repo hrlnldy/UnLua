@@ -48,7 +48,7 @@ namespace UnrealBuildTool.Rules
                 }
                 );
 
-            PublicDefinitions.Add("ENABLE_INTELLISENSE=0");
+            PublicDefinitions.Add("ENABLE_INTELLISENSE=1");
 
             PublicDefinitions.Add("HACK_HEADER_GENERATOR=1");
         }

@@ -61,6 +61,7 @@ public:
     void PostLoadMapWithWorld(UWorld *World);
     void OnPostGarbageCollect();
     void OnDelayBindObject(UObject* Object);
+    void OnLevelRemovedFromWorld(ULevel* Level, UWorld* World);
 
 #if WITH_EDITOR
     void PreBeginPIE(bool bIsSimulating);

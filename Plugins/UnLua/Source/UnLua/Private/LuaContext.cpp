@@ -102,6 +102,7 @@ void FLuaContext::RegisterDelegates()
     FCoreDelegates::OnHandleSystemEnsure.AddRaw(this, &FLuaContext::OnCrash);
     FCoreUObjectDelegates::PostLoadMapWithWorld.AddRaw(this, &FLuaContext::PostLoadMapWithWorld);
     //FCoreUObjectDelegates::GetPreGarbageCollectDelegate().AddRaw(this, &FLuaContext::OnPreGarbageCollect);
+	FWorldDelegates::LevelRemovedFromWorld.AddRaw(GLuaCxt, &FLuaContext::OnLevelRemovedFromWorld);  // Level streaming
 
 #if WITH_EDITOR
     FEditorDelegates::PreBeginPIE.AddRaw(this, &FLuaContext::PreBeginPIE);
@@ -166,8 +167,7 @@ void FLuaContext::CreateState()
         lua_register(L, "UnLua_AddToClassWhiteSet", Global_AddToClassWhiteSet);
         lua_register(L, "UnLua_RemoveFromClassWhiteSet", Global_RemoveFromClassWhiteSet);
         lua_register(L, "UnLua_UnRegisterClass", Global_UnRegisterClass);
-
-        lua_register(L, "UEPrint", Global_Print);
+        lua_register(L, "LoadFile", Global_LoadFile);  // Implement interface for loading file
 
         // register collision related enums
         FCollisionHelper::Initialize();     // initialize collision helper stuff
@@ -1130,4 +1130,12 @@ bool FLuaContext::OnGameViewportInputKey(FKey InKey, FModifierKeysState Modifier
         return HotfixLua();
     }
     return false;
+}
+
+void FLuaContext::OnLevelRemovedFromWorld(ULevel* Level, UWorld* World)
+{
+    if (Level)
+    {
+        Manager->Cleanup(Level);
+    }
 }
