@@ -1,4 +1,4 @@
-// Tencent is pleased to support the open source community by making UnLua available.
+﻿// Tencent is pleased to support the open source community by making UnLua available.
 // 
 // Copyright (C) 2019 THL A29 Limited, a Tencent company. All rights reserved.
 //
@@ -162,6 +162,7 @@ int32 Global_SetUProperty(lua_State *L);
 int32 Global_LoadObject(lua_State *L);
 int32 Global_LoadClass(lua_State *L);
 int32 Global_NewObject(lua_State *L);
+int32 Global_LoadFile(lua_State* L);
 UNLUA_API int32 Global_Print(lua_State *L);
 UNLUA_API int32 Global_Require(lua_State *L);
 

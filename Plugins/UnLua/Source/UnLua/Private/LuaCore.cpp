@@ -2022,6 +2022,33 @@ int32 Global_Require(lua_State *L)
 }
 
 /**
+ * Global glue function to open file
+ */
+int32 Global_LoadFile(lua_State* L)
+{
+    int32 nargs = lua_gettop(L);
+    const char* filename;
+    if (nargs >= 1)
+    {
+        filename = luaL_tolstring(L, 1, nullptr);
+    }
+    else return 0;
+    TArray<uint8> Data;
+    bool bSuccess = FFileHelper::LoadFileToArray(Data, ANSI_TO_TCHAR(filename));
+    if (bSuccess)
+    {
+        char* buffer = (char*) FMemory::Malloc(Data.Num()+1);
+        FMemory::Memzero(buffer, Data.Num() + 1);
+        FMemory::Memcpy(buffer, Data.GetData(), Data.Num());
+        UnLua::Push(L, buffer);
+        FMemory::Free(buffer);
+        return 1;
+    }
+    UE_LOG(LogUnLua, Log, TEXT("%s: failed to load file %s!"), ANSI_TO_TCHAR(__FUNCTION__), ANSI_TO_TCHAR(filename));
+    return 0;
+}
+
+/**
  * __index meta methods for enum
  */
 int32 Enum_Index(lua_State *L)

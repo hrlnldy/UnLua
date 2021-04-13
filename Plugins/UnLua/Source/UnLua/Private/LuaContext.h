@@ -61,6 +61,7 @@ public:
     void PreLoadMap(const FString &MapName);
     void PostLoadMapWithWorld(UWorld *World);
     void OnPostGarbageCollect();
+    void OnLevelRemovedFromWorld(ULevel* Level, UWorld* World);
 
 #if WITH_EDITOR
     void PreBeginPIE(bool bIsSimulating);

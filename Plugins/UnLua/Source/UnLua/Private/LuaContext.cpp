@@ -116,6 +116,7 @@ void FLuaContext::RegisterDelegates()
     FWorldDelegates::OnPostWorldCleanup.AddRaw(GLuaCxt, &FLuaContext::OnPostWorldCleanup);
     FWorldDelegates::OnPreWorldInitialization.AddRaw(GLuaCxt, &FLuaContext::OnPreWorldInitialization);
     FWorldDelegates::OnPostWorldInitialization.AddRaw(GLuaCxt, &FLuaContext::OnPostWorldInitialization);
+    FWorldDelegates::LevelRemovedFromWorld.AddRaw(GLuaCxt, &FLuaContext::OnLevelRemovedFromWorld);
     FCoreDelegates::OnPostEngineInit.AddRaw(GLuaCxt, &FLuaContext::OnPostEngineInit);   // called before FCoreDelegates::OnFEngineLoopInitComplete.Broadcast(), after GEngine->Init(...)
     FCoreDelegates::OnPreExit.AddRaw(GLuaCxt, &FLuaContext::OnPreExit);                 // called before StaticExit()
     FCoreDelegates::OnAsyncLoadingFlushUpdate.AddRaw(GLuaCxt, &FLuaContext::OnAsyncLoadingFlushUpdate);
@@ -202,8 +203,9 @@ void FLuaContext::CreateState()
         lua_register(L, "LoadObject", Global_LoadObject);
         lua_register(L, "LoadClass", Global_LoadClass);
         lua_register(L, "NewObject", Global_NewObject);
-
         lua_register(L, "UEPrint", Global_Print);
+        lua_register(L, "LoadFile", Global_LoadFile);  // Implement interface for loading file
+
         if (FPlatformProperties::RequiresCookedData())
         {
             lua_register(L, "require", Global_Require);             // override 'require' when running with cooked data
@@ -1129,4 +1131,12 @@ bool FLuaContext::OnGameViewportInputKey(FKey InKey, FModifierKeysState Modifier
         return HotfixLua();
     }
     return false;
+}
+
+void FLuaContext::OnLevelRemovedFromWorld(ULevel* Level, UWorld* World)
+{
+    if (Level)
+    {
+        Manager->Cleanup(Level);
+    }
 }
