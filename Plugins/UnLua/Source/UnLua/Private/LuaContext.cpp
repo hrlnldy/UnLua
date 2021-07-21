@@ -27,6 +27,8 @@
 #include "DefaultParamCollection.h"
 #include "ReflectionUtils/ReflectionRegistry.h"
 #include "Interfaces/IPluginManager.h"
+#include "Engine/LevelScriptActor.h"
+
 //
 #ifdef __cplusplus
 extern "C" {
@@ -116,6 +118,7 @@ void FLuaContext::RegisterDelegates()
     FWorldDelegates::OnPostWorldCleanup.AddRaw(GLuaCxt, &FLuaContext::OnPostWorldCleanup);
     FWorldDelegates::OnPreWorldInitialization.AddRaw(GLuaCxt, &FLuaContext::OnPreWorldInitialization);
     FWorldDelegates::OnPostWorldInitialization.AddRaw(GLuaCxt, &FLuaContext::OnPostWorldInitialization);
+    FWorldDelegates::LevelAddedToWorld.AddRaw(GLuaCxt, &FLuaContext::OnLevelAddedToWorld);
     FWorldDelegates::LevelRemovedFromWorld.AddRaw(GLuaCxt, &FLuaContext::OnLevelRemovedFromWorld);
     FCoreDelegates::OnPostEngineInit.AddRaw(GLuaCxt, &FLuaContext::OnPostEngineInit);   // called before FCoreDelegates::OnFEngineLoopInitComplete.Broadcast(), after GEngine->Init(...)
     FCoreDelegates::OnPreExit.AddRaw(GLuaCxt, &FLuaContext::OnPreExit);                 // called before StaticExit()
@@ -1138,5 +1141,17 @@ void FLuaContext::OnLevelRemovedFromWorld(ULevel* Level, UWorld* World)
     if (Level)
     {
         Manager->Cleanup(Level);
+    }
+}
+
+void FLuaContext::OnLevelAddedToWorld(ULevel* Level, UWorld* World)
+{
+    if (Level)
+    {
+        ALevelScriptActor* LSA = Level->GetLevelScriptActor();
+        if (LSA && LSA->InputEnabled() && LSA->InputComponent)
+        {
+            Manager->ReplaceInputs(LSA, LSA->InputComponent);
+        }
     }
 }
